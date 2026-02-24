@@ -6,6 +6,7 @@ const Contact = () => {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const validate = () => {
         const newErrors = {};
@@ -29,14 +30,41 @@ const Contact = () => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (validate()) {
-            // Simulate form submission
-            setTimeout(() => {
-                setSubmitted(true);
-                setFormData({ name: '', email: '', message: '' });
-            }, 800);
+            setLoading(true);
+
+            try {
+                // To make this work, replace YOUR_ACCESS_KEY_HERE with your Web3Forms access key
+                // Get your free key at: https://web3forms.com/
+                const response = await fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
+                    body: JSON.stringify({
+                        access_key: "83a89471-93fb-42e6-80fc-42a05d2cfac0",
+                        name: formData.name,
+                        email: formData.email,
+                        message: formData.message
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    setSubmitted(true);
+                    setFormData({ name: '', email: '', message: '' });
+                } else {
+                    setErrors({ ...errors, submit: result.message || 'Failed to send message. Please try again.' });
+                }
+            } catch (error) {
+                setErrors({ ...errors, submit: 'An error occurred. Please check your internet connection and try again.' });
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -170,9 +198,23 @@ const Contact = () => {
                                     {errors.message && <span className="error-text">{errors.message}</span>}
                                 </div>
 
-                                <button type="submit" className="btn btn-primary submit-btn mt-4">
-                                    Send Message
-                                    <Send size={18} />
+                                {errors.submit && (
+                                    <div className="error-text text-center mt-2 p-2 bg-red-500/10 rounded">
+                                        {errors.submit}
+                                    </div>
+                                )}
+
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary submit-btn mt-4 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                    disabled={loading}
+                                >
+                                    {loading ? 'Sending...' : (
+                                        <>
+                                            Send Message
+                                            <Send size={18} />
+                                        </>
+                                    )}
                                 </button>
                             </form>
                         )}
