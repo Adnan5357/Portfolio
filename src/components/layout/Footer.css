@@ -1,0 +1,31 @@
+.footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 0;
+    background-color: var(--bg-primary);
+    margin-top: auto;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: center;
+}
+
+.social-icon {
+    color: var(--text-secondary);
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-flex;
+    padding: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--bg-secondary);
+}
+
+.social-icon:hover {
+    color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.copyright {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-align: center;
+}
